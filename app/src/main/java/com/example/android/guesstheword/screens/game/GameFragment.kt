@@ -50,7 +50,6 @@ class GameFragment : Fragment() {
                 false
         )
 
-
         // Updates viewmodel
         Log.i("GameFragment", "Called View Model Provider xxz")
         viewModel = ViewModelProviders.of(this).get(GameViewModel::class.java)
@@ -60,45 +59,24 @@ class GameFragment : Fragment() {
 
         })
 
-        viewModel.word.observe(viewLifecycleOwner, Observer { newWord ->
-            binding.wordText.text = newWord
-        })
-
         viewModel.eventGameFinished.observe(viewLifecycleOwner, Observer<Boolean>{ hasFinished ->
             if (hasFinished) gameFinished()
 
         })
-        binding.correctButton.setOnClickListener { onCorrect() }
-        binding.skipButton.setOnClickListener { onSkip() }
-        binding.endGameButton.setOnClickListener { onEndGame() }
+
+        binding.gameViewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
 
     }
 
-
-    /** Methods for buttons presses **/
-
-    private fun onSkip() {
-        viewModel.onSkip()
-    }
-
-    private fun onCorrect() {
-        viewModel.onCorrect()
-    }
-
     /* end game */
-
     private fun gameFinished(){
         Toast.makeText(activity, "Game has just finished", Toast.LENGTH_SHORT).show()
         val action = GameFragmentDirections.actionGameToScore()
         action.score = viewModel.score.value?:0
         NavHostFragment.findNavController(this).navigate(action)
         viewModel.onGameFinishComeple()
-
-    }
-
-    private fun onEndGame(){
-        gameFinished()
     }
 
 }
